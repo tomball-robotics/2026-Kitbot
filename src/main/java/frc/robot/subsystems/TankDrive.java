@@ -9,14 +9,21 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.LimelightHelpers;
+import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
+import edu.wpi.first.math.geometry.Rotation2d;
+
 
 public class TankDrive extends SubsystemBase{
     private SparkMax leftLeader;
@@ -30,6 +37,7 @@ private DifferentialDrive m_robotDrive;
   private SparkMaxConfig leftFollowerConfig = new SparkMaxConfig();
   private SparkMaxConfig rightLeaderConfig = new SparkMaxConfig();
   private SparkMaxConfig rightFollowerConfig = new SparkMaxConfig();
+
   
   private Supplier<Double> leftAxis;
   private Supplier<Double> rotationAxis;
@@ -72,7 +80,27 @@ m_robotDrive = new DifferentialDrive(leftLeader::set, rightLeader::set);
         
         
     } 
-}
+    public Command pointToHub(){
+      return this.run( () -> {
+        LimelightHelpers.PoseEstimate position = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-front");
+        if(position.tagCount >= 1){
+                  System.out.println("o");
+
+        double robotX = position.pose.getX();
+        double robotY = position.pose.getY();
+        double dx = 11.75 - robotX;
+        double dy = 4.0 - robotY;
+        Rotation2d targetAngle = new Rotation2d(Math.atan2(dy,dx));
+        SmartDashboard.putNumber("dx", dx);
+        SmartDashboard.putNumber("dy", dy);
+        SmartDashboard.putNumber("Target angle (deg)", targetAngle.getDegrees()+180.0);
+        SmartDashboard.putNumber("Robot angle (deg)", position.pose.getRotation().getDegrees());
+        }
+
+        });
+      
+    }
+  }
     /* 
     public void move(double speed, double turn){
       leftLeader.set(speed+ turn);

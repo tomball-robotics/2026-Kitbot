@@ -51,6 +51,7 @@ public class RobotContainer {
     
       private void configureBindings() {
         operator.leftTrigger().whileTrue(inputmove);
+        operator.rightBumper().whileTrue(drive.pointToHub());
         operator.rightTrigger().whileTrue(outputmove);
         operator.leftBumper().toggleOnTrue(higher); 
         //drive.move(operator.getLeftY(), operator.getRightX());
