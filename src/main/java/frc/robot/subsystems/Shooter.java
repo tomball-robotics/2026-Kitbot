@@ -5,6 +5,7 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import com.revrobotics.spark.config.SparkMaxConfig;
@@ -15,15 +16,17 @@ public class Shooter extends SubsystemBase{
     private  SparkMax outputMotor;
     private  SparkMax inputMotor;
     private SparkMaxConfig motorConfig;
+    
      public Shooter(){
      outputMotor = new SparkMax(Constants.OutputConstants.outputMotor, MotorType.kBrushed);
      inputMotor = new SparkMax(Constants.InputConstants.inputMotor, MotorType.kBrushed);
      motorConfig = new SparkMaxConfig();
-       motorConfig.smartCurrentLimit(150)
+       motorConfig.smartCurrentLimit(40)
        .idleMode(IdleMode.kCoast)
        .inverted(false);
        outputMotor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
        inputMotor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+       
         }
         public void ReV(double speed){
                 outputMotor.set(-speed);

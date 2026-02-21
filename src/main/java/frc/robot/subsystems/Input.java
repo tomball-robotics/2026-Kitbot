@@ -15,7 +15,7 @@ public class Input extends SubsystemBase{
      inputMotor = new SparkMax(Constants.InputConstants.inputMotor, MotorType.kBrushed);
         motorConfig = new SparkMaxConfig();
 
-       motorConfig.smartCurrentLimit(150)
+       motorConfig.smartCurrentLimit(40)
        .idleMode(IdleMode.kCoast)
        .inverted(false);
      }

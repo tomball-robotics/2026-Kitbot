@@ -54,6 +54,7 @@ public class RobotContainer {
         operator.rightBumper().whileTrue(drive.pointToHub());
         operator.rightTrigger().whileTrue(outputmove);
         operator.leftBumper().toggleOnTrue(higher); 
+        operator.a().whileTrue(drive.turnToHub());
         //drive.move(operator.getLeftY(), operator.getRightX());
         
 }
