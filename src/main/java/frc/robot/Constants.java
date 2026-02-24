@@ -35,4 +35,10 @@ public final class Constants {
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
   }
+  public static class PIDConstants{
+    public static final double moveT = .05;
+    public static final double distance = 1.9;
+    public static final double moveP = .91;
+    public static final double moveD = .01;
+  }
 }

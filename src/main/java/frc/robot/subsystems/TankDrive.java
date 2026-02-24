@@ -28,6 +28,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 
 public class TankDrive extends SubsystemBase{
   private PIDController turnPID;
+  private PIDController movePID;
     private SparkMax leftLeader;
   private SparkMax leftFollower;
   private SparkMax rightLeader;
@@ -48,9 +49,11 @@ private DifferentialDrive m_robotDrive;
       rotationAxis = rotate;
 
 //public TankDrive(){
-      turnPID = new PIDController(1, 0, 0);
+      turnPID = new PIDController(1, 0, .06);
       turnPID.setTolerance(.05);
-      
+      movePID = new PIDController(Constants.PIDConstants.moveP, 0, Constants.PIDConstants.moveD);
+      movePID.setTolerance(Constants.PIDConstants.moveT);
+      movePID.setSetpoint(Constants.PIDConstants.distance);
       leftLeader = new SparkMax(Constants.DriveConstants.LEFT_LEADER_ID, MotorType.kBrushed);
         leftFollower = new SparkMax(Constants.DriveConstants.LEFT_FOLLOWER_ID, MotorType.kBrushed);
         rightLeader = new SparkMax(Constants.DriveConstants.RIGHT_LEADER_ID, MotorType.kBrushed);
@@ -92,7 +95,7 @@ m_robotDrive = new DifferentialDrive(leftLeader::set, rightLeader::set);
         double robotX = position.pose.getX();
         double robotY = position.pose.getY();
         double dx = 11.75 - robotX;
-        double dy = 4.5 - robotY;
+        double dy = 4.45 - robotY;
         Rotation2d targetAngle = new Rotation2d(Math.atan2(dy,dx));
         SmartDashboard.putNumber("dx", dx);
         SmartDashboard.putNumber("dy", dy);
@@ -118,27 +121,38 @@ m_robotDrive = new DifferentialDrive(leftLeader::set, rightLeader::set);
         SmartDashboard.putNumber("Change", change.getDegrees());
         turnPID.setSetpoint(targetAngle.plus(Rotation2d.k180deg).getRadians());
         double turnValue = turnPID.calculate(position.pose.getRotation().getRadians());
-        turnValue = Math.min(.85,Math.abs(turnValue))*Math.signum(turnValue);
+        turnValue = Math.min(.65,Math.abs(turnValue))*Math.signum(turnValue);
         if(turnValue>0.3){
         turnValue = Math.max(.5,Math.abs(turnValue))*Math.signum(turnValue);
         }
         SmartDashboard.putNumber("Turn Value", turnValue);
-        m_robotDrive.arcadeDrive(leftAxis.get(), -turnValue);
-        /* 
-        if(Math.abs(change.getDegrees()) > 40){
-          m_robotDrive.arcadeDrive(leftAxis.get(), -change.getDegrees()/45);
-        }
-        else if(Math.abs(change.getDegrees()) > 5){
-          m_robotDrive.arcadeDrive(leftAxis.get(), -change.getDegrees()/50);
+        double dr = Math.hypot(dx, dy);
+        
+        if(Math.abs(turnValue)<.3){
+          m_robotDrive.arcadeDrive(movePID.calculate(dr), turnValue);
         }
         else{
-          m_robotDrive.arcadeDrive(leftAxis.get(), 0);
+        m_robotDrive.arcadeDrive(leftAxis.get(), -turnValue);
         }
-        */
+        SmartDashboard.putNumber("movePID",movePID.calculate(dr));
         }
         
         });
       
+    }
+    public Command positionToHub(){
+      return this.run( () -> {
+        LimelightHelpers.PoseEstimate position = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-front");
+        if(position.tagCount >= 1){
+                  
+
+        double robotX = position.pose.getX();
+        double robotY = position.pose.getY();
+        double dx = 11.75 - robotX;
+        double dy = 4.5 - robotY;
+        
+        }
+      });
     }
         
   }

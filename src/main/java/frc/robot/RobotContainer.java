@@ -30,6 +30,7 @@ public class RobotContainer {
   private final Shooter shooter;
   private final Higher higher;
   private final outputMove outputmove;
+  private final Reverse reverse;
   private final CommandXboxController operator = new CommandXboxController(OperatorConstants.kDriverControllerPort);
   //private final TankDrive drive = new TankDrive();
 //commands
@@ -40,10 +41,12 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   
   public RobotContainer() {
+    
     shooter = new Shooter();
     inputmove = new inputMove(shooter);
     outputmove = new outputMove(shooter);
     higher = new Higher(shooter);
+    reverse = new Reverse(shooter);
     configureBindings();
     
       }
@@ -51,7 +54,7 @@ public class RobotContainer {
     
       private void configureBindings() {
         operator.leftTrigger().whileTrue(inputmove);
-        operator.rightBumper().whileTrue(drive.pointToHub());
+        operator.rightBumper().whileTrue(reverse);
         operator.rightTrigger().whileTrue(outputmove);
         operator.leftBumper().toggleOnTrue(higher); 
         operator.a().whileTrue(drive.turnToHub());
